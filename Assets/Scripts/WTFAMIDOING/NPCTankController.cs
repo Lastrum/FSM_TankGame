@@ -1,38 +1,49 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 public class NPCTankController : MonoBehaviour
 {
-    public Transform playerTransform;
+
+    public MonoBehaviour[] states;
+    
+    //GUI
+    public TextMeshPro header;
     
     //Bullet settings
     public GameObject bullet;
     public float shootRate;
     public float elapsedTime;
     
-    //Tank Turret
+    //public Object Bullet;
     public Transform turret { get; set; }
     public Transform bulletSpawnPoint { get; set; }
     
     //Tank Settings
     public int health = 100;
-    public float curRotSpeed;
-    public float curSpeed;
+    public float patrolStateDistance = 300;
+    public float chaseStateDistance = 200;
+    public float attackStateDistance = 100;
     
     //List of points for patrolling
     public GameObject[] pointList;
-    //Next destination position of the NPC Tank
     public Vector3 destPos;
-
+    public float curRotSpeed;
+    public float curSpeed;
+    
     public Transform player;
-
+    
+    private string currentState;
     private void Start()
     {
-        health = 100;
-
+        UpdateHeader();
+        
+        
         elapsedTime = 0.0f;
         shootRate = 2.0f;
 
@@ -72,6 +83,14 @@ public class NPCTankController : MonoBehaviour
             }
         }
 
+        public void FindNextPoint()
+        {
+            //Debug.Log("Finding next point");
+            int rndIndex = Random.Range(0, pointList.Length);
+            Vector3 rndPosition = Vector3.zero;
+            destPos = pointList[rndIndex].transform.position + rndPosition;
+        }
+    
         protected void Explode()
         {
             float rndX = Random.Range(10.0f, 30.0f);
@@ -85,6 +104,15 @@ public class NPCTankController : MonoBehaviour
             Destroy(gameObject, 1.5f);
         }
 
+        private void Update()
+        {
+            //Check for health of bullet
+            elapsedTime += Time.deltaTime;
+            
+            //Update Header
+            UpdateHeader();
+        }
+
         /// <summary>
         /// Shoot the bullet from the turret
         /// </summary>
@@ -92,9 +120,30 @@ public class NPCTankController : MonoBehaviour
         {
             if (elapsedTime >= shootRate)
             {
-                //Instantiate(Bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+                Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
                 elapsedTime = 0.0f;
             }
         }
-    }
+
+        private void CheckState()
+        {
+            foreach (var s in states)
+            {
+                if (s == s.isActiveAndEnabled)
+                {
+                    Debug.Log(s.GetType().ToString());
+                    currentState = s.GetType().ToString();
+                }
+            }
+        }
+        
+        private void UpdateHeader()
+        {
+            CheckState();
+            header.SetText( currentState + " | " + health);
+        }
+        
+        
+    
+}
 

@@ -6,6 +6,7 @@ public class State : MonoBehaviour
 {
     public List<Transition> transitions;
     public NPCTankController tank;
+    
     public virtual void Awake()
     {
         transitions = new List<Transition>();
@@ -32,17 +33,19 @@ public class State : MonoBehaviour
         // develop behaviour here
     }
     
-    public void LateUpdate()
+    protected void LateUpdate()
     {
         foreach (Transition t in transitions)
         {
-            if (t.condition.Test())
+            // if (t.condition.Test())
+            if (t.condition())
             {
                 t.target.enabled = true;
-                this.enabled = false;
+                enabled = false;
                 return;
             }
         }
     }
+
     
 }

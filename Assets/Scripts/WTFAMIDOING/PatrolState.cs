@@ -9,9 +9,9 @@ public class PatrolState : State
     public void Start()
     {
         transitions = new List<Transition>();
-        transitions.Add(() => Vector3.Distance(transform.position, tank.player.position) <= 200f, gameObject.GetComponent<ChaseState>());
+        transitions.Add(new Transition(() => Vector3.Distance(transform.position, tank.player.position) <= 200f, gameObject.GetComponent<ChaseState>()));
     }
-
+    
     public override void Update()
     {
         //Find another random patrol point if the current point is reached
@@ -23,11 +23,11 @@ public class PatrolState : State
         }
 
         //Rotate to the target point
-        Quaternion targetRotation = Quaternion.LookRotation(destPos - npc.position);
-        npc.rotation = Quaternion.Slerp(npc.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+        Quaternion targetRotation = Quaternion.LookRotation(tank.destPos - transform.position);
+       transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * tank.curRotSpeed);
 
         //Go Forward
-        npc.Translate(Vector3.forward * Time.deltaTime * curSpeed);
+        transform.Translate(Vector3.forward * Time.deltaTime * tank.curSpeed);
     }
     
     
