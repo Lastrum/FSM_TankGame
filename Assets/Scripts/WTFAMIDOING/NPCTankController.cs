@@ -17,8 +17,8 @@ public class NPCTankController : MonoBehaviour
     
     //Bullet settings
     public GameObject bullet;
-    public float shootRate;
-    public float elapsedTime;
+    public float shootRate = 2;
+    
     
     //public Object Bullet;
     public Transform turret { get; set; }
@@ -26,6 +26,8 @@ public class NPCTankController : MonoBehaviour
     
     //Tank Settings
     public int health = 100;
+    public int damage = 25;
+    public float recoveryPercentage = 50;
     public float patrolStateDistance = 300;
     public float chaseStateDistance = 200;
     public float attackStateDistance = 100;
@@ -37,15 +39,18 @@ public class NPCTankController : MonoBehaviour
     public float curSpeed;
     
     public Transform player;
+    public string currentState;
     
-    private string currentState;
+    private float elapsedTime;
+    public int maxHealth;
     private void Start()
     {
+        recoveryPercentage /= 100f;
+        maxHealth = health;
         UpdateHeader();
         
-        
         elapsedTime = 0.0f;
-        shootRate = 2.0f;
+        //shootRate = 2.0f;
 
         //Get the target enemy(Player)
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -73,7 +78,7 @@ public class NPCTankController : MonoBehaviour
             //Reduce health
             if (collision.gameObject.tag == "Bullet")
             {
-                health -= 25;
+                health -= damage;
 
                 if (health <= 0)
                 {
@@ -118,7 +123,7 @@ public class NPCTankController : MonoBehaviour
         /// </summary>
         public void ShootBullet()
         {
-            if (elapsedTime >= shootRate)
+            if (elapsedTime >= this.shootRate)
             {
                 Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
                 elapsedTime = 0.0f;

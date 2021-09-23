@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class AttackState : State
 {
+    public float rotationSpeed = 1;
+    public float speed = 100;
+    public float shootRate = 2;
+    
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -11,8 +16,17 @@ public class AttackState : State
         transitions.Add(new Transition(() => Vector3.Distance(transform.position, tank.player.position) >= tank.patrolStateDistance, gameObject.GetComponent<PatrolState>()));
         transitions.Add(new Transition(() => Vector3.Distance(transform.position, tank.player.position) <= tank.chaseStateDistance 
                                              && Vector3.Distance(transform.position, tank.player.position) >= tank.attackStateDistance, gameObject.GetComponent<ChaseState>()));
+        transitions.Add(new Transition(() => tank.health <= tank.maxHealth*tank.recoveryPercentage, gameObject.GetComponent<RecoveringState>()));
+            
     }
 
+    public override void OnEnable()
+    {
+        tank.curSpeed = speed;
+        tank.curRotSpeed = rotationSpeed;
+        tank.shootRate = shootRate;
+    }
+    
     // Update is called once per frame
     void Update()
     {
