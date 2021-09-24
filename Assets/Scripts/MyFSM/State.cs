@@ -6,11 +6,13 @@ public class State : MonoBehaviour
 {
     public List<Transition> transitions;
     public NPCTankController tank;
+    private string currentState;
     
     public virtual void Awake()
     {
         transitions = new List<Transition>();
         tank = GetComponent<NPCTankController>();
+        tank.currentState = "patrolState";
         // TO-DO
         // setup your transitions here
     }
@@ -42,6 +44,7 @@ public class State : MonoBehaviour
             {
                 t.target.enabled = true;
                 enabled = false;
+                tank.currentState = t.target.GetType().Name;
                 return;
             }
         }

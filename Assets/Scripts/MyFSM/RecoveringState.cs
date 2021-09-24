@@ -6,7 +6,7 @@ public class RecoveringState : State
 {
     public RecoveringState recovery;
     public GameObject fire;
-    public Transform position;
+    public Vector3 position;
     
     protected List<State> states;
     public State stateInitial;
@@ -14,13 +14,12 @@ public class RecoveringState : State
     
     void Start()
     {
-        fire.gameObject.SetActive(true);
         recovery = gameObject.GetComponent<RecoveringState>();
     }
 
     public override void OnEnable()
     {
-        position = transform;
+        fire.gameObject.SetActive(true);
 
         if (stateCurrent == null)
             stateCurrent = stateInitial;
@@ -40,6 +39,6 @@ public class RecoveringState : State
     // Update is called once per frame
     void Update()
     {
-        
+        //tank.currentState = stateCurrent.ToString();
     }
 }

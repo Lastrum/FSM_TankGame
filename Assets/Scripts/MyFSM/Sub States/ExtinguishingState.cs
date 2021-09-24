@@ -15,7 +15,12 @@ public class ExtinguishingState : RecoveringState
         transitions.Add(new Transition(() => Math.Abs(tank.health - tank.maxHealth) < 0.5f, gameObject.GetComponent<ReturningState>()));
 
     }
-    
+
+    public override void OnEnable()
+    {
+        tank.currentState = GetType().Name;
+    }
+
     void Update()
     {
         tank.health += (tank.maxHealth * healPercentage) * Time.deltaTime;

@@ -150,7 +150,7 @@ public class NPCTankController : MonoBehaviour
     
     private void UpdateHeader()
     {
-        CheckState();
+        //CheckState();
         header.SetText( currentState + " | " + Math.Round(health));
     }
         
