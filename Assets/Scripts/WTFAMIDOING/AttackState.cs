@@ -14,8 +14,7 @@ public class AttackState : State
     {
         transitions = new List<Transition>();
         transitions.Add(new Transition(() => Vector3.Distance(transform.position, tank.player.position) >= tank.patrolStateDistance, gameObject.GetComponent<PatrolState>()));
-        transitions.Add(new Transition(() => Vector3.Distance(transform.position, tank.player.position) <= tank.chaseStateDistance 
-                                             && Vector3.Distance(transform.position, tank.player.position) >= tank.attackStateDistance, gameObject.GetComponent<ChaseState>()));
+        transitions.Add(new Transition(() => Vector3.Distance(transform.position, tank.player.position) <= tank.chaseStateDistance && Vector3.Distance(transform.position, tank.player.position) >= tank.attackStateDistance, gameObject.GetComponent<ChaseState>()));
         transitions.Add(new Transition(() => tank.health <= tank.maxHealth*tank.recoveryPercentage, gameObject.GetComponent<RecoveringState>()));
             
     }

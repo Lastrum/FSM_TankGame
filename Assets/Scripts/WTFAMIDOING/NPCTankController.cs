@@ -25,8 +25,8 @@ public class NPCTankController : MonoBehaviour
     public Transform bulletSpawnPoint { get; set; }
     
     //Tank Settings
-    public int health = 100;
-    public int damage = 25;
+    public float health = 100;
+    public float damage = 25;
     public float recoveryPercentage = 50;
     public float patrolStateDistance = 300;
     public float chaseStateDistance = 200;
@@ -42,7 +42,7 @@ public class NPCTankController : MonoBehaviour
     public string currentState;
     
     private float elapsedTime;
-    public int maxHealth;
+    public float maxHealth;
     private void Start()
     {
         recoveryPercentage /= 100f;
@@ -79,74 +79,80 @@ public class NPCTankController : MonoBehaviour
             if (collision.gameObject.tag == "Bullet")
             {
                 health -= damage;
-
-                if (health <= 0)
-                {
-                    Debug.Log("Switch to Dead State");
-                    Explode();
-                }
+                CheckHealth();
             }
         }
 
-        public void FindNextPoint()
-        {
-            //Debug.Log("Finding next point");
-            int rndIndex = Random.Range(0, pointList.Length);
-            Vector3 rndPosition = Vector3.zero;
-            destPos = pointList[rndIndex].transform.position + rndPosition;
-        }
-    
-        protected void Explode()
-        {
-            float rndX = Random.Range(10.0f, 30.0f);
-            float rndZ = Random.Range(10.0f, 30.0f);
-            for (int i = 0; i < 3; i++)
-            {
-                GetComponent<Rigidbody>().AddExplosionForce(10000.0f, transform.position - new Vector3(rndX, 10.0f, rndZ), 40.0f, 10.0f);
-                GetComponent<Rigidbody>().velocity = transform.TransformDirection(new Vector3(rndX, 20.0f, rndZ));
-            }
+    public void FindNextPoint()
+    {
+        //Debug.Log("Finding next point");
+        int rndIndex = Random.Range(0, pointList.Length);
+        Vector3 rndPosition = Vector3.zero;
+        destPos = pointList[rndIndex].transform.position + rndPosition;
+    }
 
-            Destroy(gameObject, 1.5f);
-        }
-
-        private void Update()
+    private void CheckHealth()
+    {
+        if (health <= 0)
         {
-            //Check for health of bullet
-            elapsedTime += Time.deltaTime;
-            
-            //Update Header
-            UpdateHeader();
+            Debug.Log("Switch to Dead State");
+            Explode();
+        }
+    }
+    protected void Explode()
+    {
+        float rndX = Random.Range(10.0f, 30.0f);
+        float rndZ = Random.Range(10.0f, 30.0f);
+        for (int i = 0; i < 3; i++)
+        {
+            GetComponent<Rigidbody>().AddExplosionForce(10000.0f, transform.position - new Vector3(rndX, 10.0f, rndZ), 40.0f, 10.0f);
+            GetComponent<Rigidbody>().velocity = transform.TransformDirection(new Vector3(rndX, 20.0f, rndZ));
         }
 
-        /// <summary>
-        /// Shoot the bullet from the turret
-        /// </summary>
-        public void ShootBullet()
-        {
-            if (elapsedTime >= this.shootRate)
-            {
-                Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-                elapsedTime = 0.0f;
-            }
-        }
+        Destroy(gameObject, 1.5f);
+    }
 
-        private void CheckState()
-        {
-            foreach (var s in states)
-            {
-                if (s == s.isActiveAndEnabled)
-                {
-                    Debug.Log(s.GetType().ToString());
-                    currentState = s.GetType().ToString();
-                }
-            }
-        }
+    private void Update()
+    {
+        //Check for health of bullet
+        elapsedTime += Time.deltaTime;
         
-        private void UpdateHeader()
+        //Update Header
+        UpdateHeader();
+        
+        //Check Health
+        CheckHealth();
+    }
+
+    /// <summary>
+    /// Shoot the bullet from the turret
+    /// </summary>
+    public void ShootBullet()
+    {
+        if (elapsedTime >= this.shootRate)
         {
-            CheckState();
-            header.SetText( currentState + " | " + health);
+            Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+            elapsedTime = 0.0f;
         }
+    }
+
+    private void CheckState()
+    {
+        foreach (var s in states)
+        {
+            if (s == s.isActiveAndEnabled)
+            {
+                //Debug.Log(s.GetType().ToString());
+                currentState = s.GetType().ToString();
+            }
+        }
+    }
+    
+    private void UpdateHeader()
+    {
+        CheckState();
+        header.SetText( currentState + " | " + Math.Round(health));
+    }
         
         
     
